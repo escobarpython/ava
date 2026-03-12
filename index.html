@@ -254,37 +254,16 @@
   }
 
   .day-col.saturday {
-    background: #fff4cc;
+    background: #ffe4e4;
   }
 
   .day-col.saturday .day-periods {
     position: relative;
     min-height: 360px;
     overflow: hidden;
-    background: linear-gradient(180deg, #fff6d9 0%, #ffeeb8 100%);
+    background: #ffd6d6;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
-  }
-
-  .saturday-pattern {
-    position: absolute;
-    inset: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    pointer-events: none;
-    opacity: 0.35;
-    transform: rotate(-6deg);
-    z-index: 0;
-  }
-
-  .saturday-pattern .line {
-    font-family: 'Space Mono', monospace;
-    font-weight: 700;
-    font-size: 18px;
-    color: #8f5b00;
-    letter-spacing: 2px;
-    white-space: nowrap;
   }
 
   .day-col.saturday .period-item {
@@ -1205,18 +1184,6 @@ function renderCalendar() {
     const periods = document.createElement('div');
     periods.className = 'day-periods';
 
-    if (idx === 5) {
-      const pattern = document.createElement('div');
-      pattern.className = 'saturday-pattern';
-      for (let i = 0; i < 11; i++) {
-        const line = document.createElement('div');
-        line.className = 'line';
-        line.textContent = 'PIC  PIC  PIC  PIC  PIC  PIC  PIC  PIC';
-        pattern.appendChild(line);
-      }
-      periods.appendChild(pattern);
-    }
-
     if (dayData.periods.length === 0) {
       const noClass = document.createElement('div');
       noClass.style.cssText = 'padding:10px;border:1.5px dashed #ccc;border-radius:8px;font-family:DM Mono,monospace;font-size:11px;color:#777;text-align:center;';
@@ -1606,6 +1573,3 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 </script>
 </body>
 </html>
-
-
-// STERRADEV PROPERTY - POWERED BY STR ------> LEARN MORE @ STERRA FUN / STERRA RECORDS, STERRADEV, STERRAFC, STERRACRFT, STERRADC
