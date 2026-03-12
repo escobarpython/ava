@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>escobaraava 211</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --off-white: #F4F4F0;
+    --cream: #EBEBЕ6;
+    --black: #111111;
+    --dark: #222222;
+    --accent: #FF5C35;
+    --accent2: #C8FF00;
+    --accent3: #00FFD1;
+    --border: 1.5px solid #111111;
+    --shadow: 3px 3px 0px #111111;
+    --shadow-lg: 5px 5px 0px #111111;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--off-white);
+    font-family: 'DM Mono', 'Space Mono', monospace;
+    color: var(--black);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--black);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    color: var(--off-white);
+    letter-spacing: -1px;
+    font-weight: 700;
+  }
+
+  .logo span {
+    color: var(--accent2);
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .nav-btn {
+    background: transparent;
+    border: 1.5px solid var(--off-white);
+    color: var(--off-white);
+    padding: 8px 18px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: var(--black);
+    transform: translateY(-2px);
+  }
+
+  .dashboard-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .dashboard-btn:hover {
+    background: #ff3a10;
+    border-color: #ff3a10;
+    color: white;
+  }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+
+  /* SECTION TITLES */
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 2.5px;
+    background: var(--black);
+  }
+
+  /* CALENDAR SECTION */
+  .calendar-section {
+    margin-bottom: 40px;
+  }
+
+  .week-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .week-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--cream);
+    border: var(--border);
+    padding: 8px 20px;
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+  }
+
+  .week-arrow {
+    background: var(--black);
+    color: var(--off-white);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    box-shadow: var(--shadow);
+  }
+
+  .week-arrow:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 6px 0px #1A1A1A;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .day-col {
+    background: white;
+    border: var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.15s;
+  }
+
+  .day-col:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .day-header {
+    background: var(--black);
+    color: var(--off-white);
+    padding: 10px 8px;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .day-col.today .day-header {
+    background: var(--accent);
+  }
+
+  .day-periods {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .period-item {
+    padding: 7px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 2px solid transparent;
+    position: relative;
+    cursor: default;
+  }
+
+  .period-item .time {
+    font-size: 9px;
+    font-weight: 500;
+    opacity: 0.6;
+    display: block;
+    margin-bottom: 1px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .period-item .subject {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .period-item.has-activity {
+    border-color: var(--accent);
+    background: #fff0ed;
+  }
+
+  .activity-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    top: 6px;
+    right: 8px;
+  }
+
+  /* Subject colors */
+  .s-fisica    { background: #E8F4FF; }
+  .s-quimica   { background: #FFF0E8; }
+  .s-bio       { background: #E8FFE8; }
+  .s-mat       { background: #F0E8FF; }
+  .s-geo       { background: #E8FFF5; }
+  .s-hist      { background: #FFF8E8; }
+  .s-port      { background: #FFE8F0; }
+  .s-ingles    { background: #E8F8FF; }
+  .s-lit       { background: #FFF0F8; }
+  .s-prod      { background: #F5FFE8; }
+  .s-artes     { background: #FFE8FF; }
+  .s-ef        { background: #E8FFFF; }
+  .s-socio     { background: #FFFFE8; }
+  .s-filo      { background: #F0F0FF; }
+  .s-pv        { background: #FFF5E8; }
+  .s-er        { background: #F0FFF0; }
+
+  /* PDF SECTION */
+  .pdf-section {
+    margin-bottom: 40px;
+  }
+
+  .subject-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .subject-tab {
+    padding: 6px 14px;
+    border: var(--border);
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    background: white;
+    transition: all 0.15s;
+    box-shadow: 2px 2px 0px #111;
+  }
+
+  .subject-tab:hover, .subject-tab.active {
+    background: var(--black);
+    color: var(--off-white);
+    transform: translateY(-2px);
+    box-shadow: 2px 4px 0px #1A1A1A;
+  }
+
+  .pdf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .pdf-card {
+    background: white;
+    border: var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .pdf-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .pdf-icon {
+    width: 48px;
+    height: 60px;
+    background: var(--accent);
+    border: var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .pdf-name {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .pdf-subject-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--cream);
+    border: 1.5px solid var(--black);
+    padding: 3px 10px;
+    border-radius: 3px;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .pdf-empty {
+    grid-column: 1/-1;
+    padding: 60px;
+    text-align: center;
+    font-family: 'Architects Daughter', cursive;
+    font-size: 18px;
+    color: #888;
+    border: 2.5px dashed #ccc;
+    border-radius: 12px;
+  }
+
+  /* UPLOAD AREA */
+  .upload-area {
+    border: 3px dashed var(--black);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+  }
+
+  .upload-area:hover {
+    background: var(--cream);
+  }
+
+  .upload-area .upload-icon { font-size: 36px; margin-bottom: 12px; }
+  .upload-area p { font-family: 'DM Mono', monospace; font-weight: 500; font-size: 14px; }
+  .upload-area small { color: #888; font-family: 'DM Mono', monospace; font-size: 12px; }
+
+  /* MODAL OVERLAY */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: var(--off-white);
+    border: var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    width: 460px;
+    max-width: 95vw;
+    box-shadow: var(--shadow-lg);
+    animation: popIn 0.2s ease;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .modal-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .modal-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--black);
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    display: block;
+    font-weight: 700;
+    font-size: 11px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: var(--border);
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    background: white;
+    outline: none;
+    box-shadow: var(--shadow);
+    transition: all 0.15s;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    box-shadow: 4px 4px 0px var(--accent);
+  }
+
+  .form-textarea { resize: vertical; min-height: 80px; }
+
+  .btn {
+    padding: 12px 24px;
+    border: var(--border);
+    border-radius: 6px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: var(--shadow);
+  }
+
+  .btn-primary {
+    background: var(--black);
+    color: var(--off-white);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .btn-danger {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-secondary {
+    background: white;
+    color: var(--black);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  /* LOGIN MODAL */
+  .login-input {
+    letter-spacing: 4px;
+  }
+
+  /* DASHBOARD */
+  .dashboard-panel {
+    display: none;
+    background: white;
+    border: var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .dashboard-panel.open { display: block; }
+
+  .dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .activity-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--cream);
+    border: var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+
+  .activity-row .act-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .activity-row .act-info { flex: 1; }
+  .activity-row .act-title { font-family: 'DM Mono', monospace; font-weight: 500; font-size: 13px; }
+  .activity-row .act-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: #666; margin-top: 2px; }
+
+  .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #999;
+    transition: color 0.15s;
+  }
+
+  .delete-btn:hover { color: var(--accent); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--black);
+    color: var(--off-white);
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 13px;
+    box-shadow: var(--shadow-lg);
+    z-index: 999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* TABS */
+  .main-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 28px;
+    border: var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    width: fit-content;
+    box-shadow: var(--shadow);
+  }
+
+  .main-tab {
+    padding: 12px 28px;
+    background: white;
+    border: none;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-right: var(--border);
+  }
+
+  .main-tab:last-child { border-right: none; }
+
+  .main-tab.active {
+    background: var(--black);
+    color: var(--off-white);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ACTIVITY POPOVER */
+  .act-popover {
+    position: absolute;
+    z-index: 50;
+    background: var(--black);
+    color: var(--off-white);
+    border-radius: 8px;
+    padding: 14px 16px;
+    min-width: 220px;
+    max-width: 260px;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+    animation: popIn 0.15s ease;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .act-popover::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 16px;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid var(--black);
+  }
+
+  .act-popover .pop-title {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .act-popover .pop-meta {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+
+  .act-popover .pop-desc {
+    font-size: 11px;
+    opacity: 0.85;
+    line-height: 1.5;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+
+  .act-popover .pop-due {
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--accent2);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .period-item { position: relative; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .calendar-grid { grid-template-columns: repeat(2, 1fr); }
+    header { padding: 12px 16px; }
+    .logo { font-size: 22px; }
+  }
+
+  /* Doodle decorations */
+  .doodle {
+    position: fixed;
+    opacity: 0.05;
+    font-size: 80px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .d1 { top: 15%; left: 2%; transform: rotate(-15deg); }
+  .d2 { top: 60%; right: 2%; transform: rotate(20deg); }
+  .d3 { bottom: 10%; left: 5%; transform: rotate(10deg); }
+</style>
+</head>
+<body>
+
+
+
+<!-- HEADER -->
+<header>
+  <div class="logo">escobaraava <span>211</span></div>
+  <div class="header-nav">
+    <button class="nav-btn" onclick="showTab('calendar')">📅 Calendário</button>
+    <button class="nav-btn" onclick="showTab('pdfs')">📄 PDFs</button>
+    <button class="nav-btn dashboard-btn" onclick="openLogin()">⚙️ Dashboard</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- DASHBOARD PANEL (hidden by default) -->
+  <div class="dashboard-panel" id="dashboardPanel">
+    <div class="dash-header">
+      <div class="section-title" style="margin:0">⚙️ Dashboard</div>
+      <button class="btn btn-primary" onclick="openAddActivity()">+ Adicionar Atividade</button>
+    </div>
+    <div class="activity-list" id="activityList">
+      <!-- activities render here -->
+    </div>
+    <div id="noActivities" style="text-align:center;padding:30px;color:#888;font-family:'Architects Daughter',cursive;font-size:16px;">
+      Nenhuma atividade adicionada ainda!
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="main-tabs">
+    <button class="main-tab active" id="tab-calendar" onclick="showTab('calendar')">📅 Calendário</button>
+    <button class="main-tab" id="tab-pdfs" onclick="showTab('pdfs')">📄 PDFs das Aulas</button>
+    <button class="main-tab" id="tab-upcoming" onclick="showTab('upcoming')">🔔 Próximas Atividades</button>
+  </div>
+
+  <!-- CALENDAR TAB -->
+  <div class="tab-content active" id="content-calendar">
+    <div class="calendar-section">
+      <div class="week-nav">
+        <button class="week-arrow" onclick="changeWeek(-1)">←</button>
+        <div class="week-label" id="weekLabel">Semana atual</div>
+        <button class="week-arrow" onclick="changeWeek(1)">→</button>
+        <button class="btn btn-secondary" style="font-size:13px;padding:6px 14px;box-shadow:2px 2px 0 #1a1a1a" onclick="goToday()">Hoje</button>
+      </div>
+      <div class="calendar-grid" id="calendarGrid">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF TAB -->
+  <div class="tab-content" id="content-pdfs">
+    <div class="pdf-section">
+      <div class="subject-tabs" id="subjectTabs">
+        <div class="subject-tab active" onclick="filterPdfs('all', this)">Todos</div>
+      </div>
+
+      <div id="uploadAreaWrapper">
+        <div class="upload-area" onclick="document.getElementById('pdfInput').click()" id="uploadArea"
+             ondragover="event.preventDefault();this.style.background='var(--cream)'"
+             ondragleave="this.style.background='white'"
+             ondrop="handleDrop(event)">
+          <div class="upload-icon">📎</div>
+          <p>Clique ou arraste PDFs aqui</p>
+          <small>Adicione materiais de aula em PDF</small>
+        </div>
+        <br>
+      </div>
+
+      <input type="file" id="pdfInput" accept=".pdf" multiple style="display:none" onchange="handlePdfUpload(event)">
+
+      <div class="pdf-grid" id="pdfGrid">
+        <div class="pdf-empty" id="pdfEmpty">📚 Nenhum PDF adicionado ainda.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPCOMING ACTIVITIES TAB -->
+  <div class="tab-content" id="content-upcoming">
+    <div id="upcomingList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <div id="upcomingEmpty" style="text-align:center;padding:60px;color:#888;font-family:'Space Mono',monospace;font-size:14px;border:1.5px dashed #ccc;border-radius:8px;display:none">
+      // nenhuma atividade encontrada
+    </div>
+  </div>
+
+</main>
+
+<!-- === MODALS === -->
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box" style="width:360px">
+    <div class="modal-title">🔐 Dashboard <button class="modal-close" onclick="closeModal('loginModal')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">Usuário</label>
+      <input class="form-input" id="loginUser" placeholder="usuário" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Senha</label>
+      <input class="form-input login-input" id="loginPass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <div id="loginError" style="color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px;display:none">Usuário ou senha incorretos!</div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeModal('loginModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="doLogin()">Entrar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ACTIVITY MODAL -->
+<div class="modal-overlay" id="activityModal">
+  <div class="modal-box">
+    <div class="modal-title">➕ Nova Atividade <button class="modal-close" onclick="closeModal('activityModal')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">Título da Atividade</label>
+      <input class="form-input" id="actTitle" placeholder="Ex: Trabalho de Física" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label class="form-label">Dia da Semana</label>
+        <select class="form-select" id="actDay">
+          <option value="0">Segunda-feira</option>
+          <option value="1">Terça-feira</option>
+          <option value="2">Quarta-feira</option>
+          <option value="3">Quinta-feira</option>
+          <option value="4">Sexta-feira</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Período</label>
+        <select class="form-select" id="actPeriod">
+          <!-- filled dynamically -->
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descrição (opcional)</label>
+      <textarea class="form-textarea" id="actDesc" placeholder="Detalhes da atividade..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Data de Entrega</label>
+      <input class="form-input" id="actDate" type="date" />
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeModal('activityModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveActivity()">Salvar ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF SUBJECT MODAL -->
+<div class="modal-overlay" id="pdfSubjectModal">
+  <div class="modal-box" style="width:380px">
+    <div class="modal-title">📄 Qual matéria? <button class="modal-close" onclick="closeModal('pdfSubjectModal')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">Matéria</label>
+      <select class="form-select" id="pdfSubjectSel"></select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeModal('pdfSubjectModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmPdfSubject()">Adicionar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ========================
+// DATA
+// ========================
+
+const SCHEDULE = [
+  { day: 0, dayName: 'Segunda-feira', short: 'SEG', periods: [
+    { time: '07:30', subject: 'Física' },
+    { time: '08:18', subject: 'Física' },
+    { time: '09:26', subject: 'Geografia' },
+    { time: '10:14', subject: 'Geografia' },
+    { time: '11:14', subject: 'Matemática' },
+    { time: '13:30', subject: 'Biologia' },
+    { time: '14:18', subject: 'Produção Textual' },
+    { time: '15:26', subject: 'Língua Inglesa' },
+    { time: '16:14', subject: 'Química' },
+    { time: '17:14', subject: 'Ensino Religioso' },
+  ]},
+  { day: 1, dayName: 'Terça-feira', short: 'TER', periods: [
+    { time: '07:30', subject: 'Química' },
+    { time: '08:18', subject: 'Química' },
+    { time: '09:26', subject: 'História' },
+    { time: '10:14', subject: 'Literatura' },
+    { time: '11:14', subject: 'Projeto de Vida' },
+    { time: '12:02', subject: 'Língua Portuguesa' },
+  ]},
+  { day: 2, dayName: 'Quarta-feira', short: 'QUA', periods: [
+    { time: '07:30', subject: 'Física' },
+    { time: '08:18', subject: 'História' },
+    { time: '09:26', subject: 'Língua Inglesa' },
+    { time: '10:14', subject: 'Biologia' },
+    { time: '11:14', subject: 'Educação Física' },
+    { time: '12:02', subject: 'Matemática' },
+  ]},
+  { day: 3, dayName: 'Quinta-feira', short: 'QUI', periods: [
+    { time: '07:30', subject: 'Matemática' },
+    { time: '08:18', subject: 'Artes' },
+    { time: '09:26', subject: 'Filosofia' },
+    { time: '10:14', subject: 'Produção Textual' },
+    { time: '11:14', subject: 'Geografia' },
+    { time: '12:02', subject: 'Educação Física' },
+  ]},
+  { day: 4, dayName: 'Sexta-feira', short: 'SEX', periods: [
+    { time: '07:30', subject: 'Língua Portuguesa' },
+    { time: '08:18', subject: 'Língua Portuguesa' },
+    { time: '09:26', subject: 'Biologia' },
+    { time: '10:14', subject: 'Sociologia' },
+    { time: '11:14', subject: 'Matemática' },
+    { time: '12:02', subject: 'História' },
+  ]},
+];
+
+const ALL_SUBJECTS = [...new Set(SCHEDULE.flatMap(d => d.periods.map(p => p.subject)))].sort();
+
+const SUBJECT_CLASS = {
+  'Física': 's-fisica',
+  'Química': 's-quimica',
+  'Biologia': 's-bio',
+  'Matemática': 's-mat',
+  'Geografia': 's-geo',
+  'História': 's-hist',
+  'Língua Portuguesa': 's-port',
+  'Língua Inglesa': 's-ingles',
+  'Literatura': 's-lit',
+  'Produção Textual': 's-prod',
+  'Artes': 's-artes',
+  'Educação Física': 's-ef',
+  'Sociologia': 's-socio',
+  'Filosofia': 's-filo',
+  'Projeto de Vida': 's-pv',
+  'Ensino Religioso': 's-er',
+};
+
+let activities = JSON.parse(localStorage.getItem('escobAvaActivities') || 'null');
+let pdfs = JSON.parse(localStorage.getItem('escobAvaPdfs') || 'null');
+
+// Seed lorem ipsum data if first load
+if (!activities) {
+  const today = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = (offset) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() + offset);
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  };
+  activities = [
+    { id: 1, title: 'Trabalho de Física — Lorem Ipsum', day: '0', period: '0', desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', date: dateStr(3) },
+    { id: 2, title: 'Prova de Matemática — Dolor Sit', day: '2', period: '5', desc: 'Ut enim ad minim veniam, quis nostrud exercitation.', date: dateStr(5) },
+    { id: 3, title: 'Redação — Adipiscing Elit', day: '1', period: '3', desc: 'Duis aute irure dolor in reprehenderit in voluptate.', date: dateStr(7) },
+    { id: 4, title: 'Seminário de Biologia — Consectetur', day: '4', period: '2', desc: 'Excepteur sint occaecat cupidatat non proident.', date: dateStr(10) },
+    { id: 5, title: 'Projeto de Química — Nostrud', day: '3', period: '0', desc: 'Sunt in culpa qui officia deserunt mollit anim id est laborum.', date: dateStr(14) },
+  ];
+  localStorage.setItem('escobAvaActivities', JSON.stringify(activities));
+}
+
+if (!pdfs) {
+  pdfs = [
+    { id: 101, name: 'Lorem Ipsum — Introdução à Física.pdf', subject: 'Física', data: null },
+    { id: 102, name: 'Dolor Sit — Funções Matemáticas.pdf', subject: 'Matemática', data: null },
+    { id: 103, name: 'Adipiscing — Tabela Periódica.pdf', subject: 'Química', data: null },
+  ];
+  localStorage.setItem('escobAvaPdfs', JSON.stringify(pdfs));
+}
+let isLoggedIn = false;
+let weekOffset = 0;
+let pendingPdfFiles = [];
+let currentPdfFilter = 'all';
+
+// ========================
+// UTILS
+// ========================
+
+function saveData() {
+  localStorage.setItem('escobAvaActivities', JSON.stringify(activities));
+  localStorage.setItem('escobAvaPdfs', JSON.stringify(pdfs));
+}
+
+function toast(msg, duration = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+function getMonday(d) {
+  const dt = new Date(d);
+  const day = dt.getDay();
+  const diff = dt.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(dt.setDate(diff));
+}
+
+function formatDate(d) {
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+}
+
+// ========================
+// TABS
+// ========================
+
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('content-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'upcoming') renderUpcoming();
+}
+
+// ========================
+// CALENDAR
+// ========================
+
+function changeWeek(dir) { weekOffset += dir; renderCalendar(); }
+function goToday() { weekOffset = 0; renderCalendar(); }
+
+function closeAllPopovers() {
+  document.querySelectorAll('.act-popover').forEach(p => p.remove());
+}
+
+document.addEventListener('click', () => closeAllPopovers());
+
+function renderCalendar() {
+  const today = new Date();
+  const monday = getMonday(today);
+  monday.setDate(monday.getDate() + weekOffset * 7);
+
+  const endFri = new Date(monday);
+  endFri.setDate(endFri.getDate() + 4);
+
+  document.getElementById('weekLabel').textContent =
+    formatDate(monday) + ' – ' + formatDate(endFri);
+
+  const grid = document.getElementById('calendarGrid');
+  grid.innerHTML = '';
+
+  SCHEDULE.forEach((dayData, idx) => {
+    const dayDate = new Date(monday);
+    dayDate.setDate(dayDate.getDate() + idx);
+    const isToday = weekOffset === 0 && today.getDay() === idx + 1;
+
+    const col = document.createElement('div');
+    col.className = 'day-col' + (isToday ? ' today' : '');
+
+    const header = document.createElement('div');
+    header.className = 'day-header';
+    header.innerHTML = `${dayData.short}<br><span style="font-size:11px;font-weight:600;opacity:0.8">${formatDate(dayDate)}</span>`;
+    col.appendChild(header);
+
+    const periods = document.createElement('div');
+    periods.className = 'day-periods';
+
+    dayData.periods.forEach((period, pidx) => {
+      const item = document.createElement('div');
+      const subClass = SUBJECT_CLASS[period.subject] || '';
+      item.className = 'period-item ' + subClass;
+
+      // check activities
+      const acts = activities.filter(a => parseInt(a.day) === idx && parseInt(a.period) === pidx);
+      if (acts.length > 0) {
+        item.classList.add('has-activity');
+        const dot = document.createElement('div');
+        dot.className = 'activity-dot';
+        item.appendChild(dot);
+        item.style.cursor = 'pointer';
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeAllPopovers();
+          const pop = document.createElement('div');
+          pop.className = 'act-popover';
+          pop.innerHTML = acts.map(act => {
+            const dueDate = act.date ? new Date(act.date + 'T00:00:00') : null;
+            return `
+              <div class="pop-title">${act.title}</div>
+              <div class="pop-meta">${SCHEDULE[idx].dayName} • ${period.time} — ${period.subject}</div>
+              ${act.desc ? `<div class="pop-desc">${act.desc}</div>` : ''}
+              ${dueDate ? `<div class="pop-due">📅 entrega: ${dueDate.toLocaleDateString('pt-BR')}</div>` : ''}
+            `;
+          }).join('<hr style="border:none;border-top:1px solid rgba(255,255,255,0.15);margin:10px 0">');
+          pop.id = 'popover-active';
+          item.appendChild(pop);
+        });
+      }
+
+      item.innerHTML += `<span class="time">${period.time}</span><span class="subject">${period.subject}</span>`;
+      periods.appendChild(item);
+    });
+
+    col.appendChild(periods);
+    grid.appendChild(col);
+  });
+}
+
+// ========================
+// AUTH
+// ========================
+
+function openLogin() {
+  if (isLoggedIn) {
+    toggleDashboard();
+    return;
+  }
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  openModal('loginModal');
+  setTimeout(() => document.getElementById('loginUser').focus(), 100);
+}
+
+function doLogin() {
+  const user = document.getElementById('loginUser').value.trim().toLowerCase();
+  const pass = document.getElementById('loginPass').value.trim().toLowerCase();
+  if (user === 'sntkarl' && pass === 'sterra') {
+    isLoggedIn = true;
+    closeModal('loginModal');
+    toast('✅ Bem-vindo ao Dashboard!');
+    toggleDashboard(true);
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
+  }
+}
+
+function toggleDashboard(forceOpen) {
+  const panel = document.getElementById('dashboardPanel');
+  if (forceOpen || !panel.classList.contains('open')) {
+    panel.classList.add('open');
+    renderActivities();
+    // show upload area for admin
+    document.getElementById('uploadAreaWrapper').style.display = 'block';
+  } else {
+    panel.classList.remove('open');
+  }
+}
+
+// ========================
+// UPCOMING ACTIVITIES
+// ========================
+
+function renderUpcoming() {
+  const list = document.getElementById('upcomingList');
+  const empty = document.getElementById('upcomingEmpty');
+  list.innerHTML = '';
+
+  const sorted = [...activities].sort((a, b) => {
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return new Date(a.date) - new Date(b.date);
+  });
+
+  if (sorted.length === 0) {
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  sorted.forEach(act => {
+    const dayData = SCHEDULE[parseInt(act.day)];
+    const periodData = dayData.periods[parseInt(act.period)];
+    const dueDate = act.date ? new Date(act.date + 'T00:00:00') : null;
+    const diffDays = dueDate ? Math.ceil((dueDate - today) / 86400000) : null;
+
+    let urgencyColor = '#111';
+    let urgencyLabel = '';
+    let urgencyBg = 'white';
+    if (diffDays !== null) {
+      if (diffDays < 0)       { urgencyColor = '#999'; urgencyLabel = 'vencida'; urgencyBg = '#f9f9f9'; }
+      else if (diffDays === 0){ urgencyColor = '#FF5C35'; urgencyLabel = 'hoje!'; urgencyBg = '#fff0ed'; }
+      else if (diffDays <= 3) { urgencyColor = '#FF5C35'; urgencyLabel = `em ${diffDays}d`; urgencyBg = '#fff6f4'; }
+      else if (diffDays <= 7) { urgencyColor = '#e0a800'; urgencyLabel = `em ${diffDays}d`; urgencyBg = '#fffdf0'; }
+      else                    { urgencyLabel = `em ${diffDays}d`; }
+    }
+
+    const card = document.createElement('div');
+    card.style.cssText = `background:${urgencyBg};border:1.5px solid #111;border-radius:8px;padding:16px 20px;display:flex;align-items:center;gap:16px;box-shadow:3px 3px 0 #111;`;
+    card.innerHTML = `
+      <div style="flex:1;min-width:0">
+        <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:13px;margin-bottom:4px">${act.title}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:#666">${dayData.dayName} • ${periodData.time} — ${periodData.subject}</div>
+        ${act.desc ? `<div style="font-family:'DM Mono',monospace;font-size:11px;color:#888;margin-top:6px">${act.desc}</div>` : ''}
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        ${dueDate ? `<div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:${urgencyColor}">${urgencyLabel}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#999;margin-top:2px">${dueDate.toLocaleDateString('pt-BR')}</div>` : '<div style="font-size:11px;color:#aaa;font-family:DM Mono,monospace">sem data</div>'}
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+// ========================
+// ACTIVITIES
+// ========================
+
+function openAddActivity() {
+  // populate period select based on first day
+  populatePeriodSelect(0);
+  document.getElementById('actTitle').value = '';
+  document.getElementById('actDesc').value = '';
+  document.getElementById('actDate').value = '';
+  document.getElementById('actDay').value = '0';
+  document.getElementById('actDay').onchange = () => populatePeriodSelect(parseInt(document.getElementById('actDay').value));
+  openModal('activityModal');
+}
+
+function populatePeriodSelect(dayIdx) {
+  const sel = document.getElementById('actPeriod');
+  sel.innerHTML = '';
+  SCHEDULE[dayIdx].periods.forEach((p, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${p.time} – ${p.subject}`;
+    sel.appendChild(opt);
+  });
+}
+
+function saveActivity() {
+  const title = document.getElementById('actTitle').value.trim();
+  if (!title) { alert('Insira um título!'); return; }
+  const day = document.getElementById('actDay').value;
+  const period = document.getElementById('actPeriod').value;
+  const desc = document.getElementById('actDesc').value.trim();
+  const date = document.getElementById('actDate').value;
+
+  activities.push({ id: Date.now(), title, day, period, desc, date });
+  saveData();
+  closeModal('activityModal');
+  renderActivities();
+  renderCalendar();
+  renderUpcoming();
+  toast('✅ Atividade adicionada!');
+}
+
+function deleteActivity(id) {
+  activities = activities.filter(a => a.id !== id);
+  saveData();
+  renderActivities();
+  renderCalendar();
+  renderUpcoming();
+  toast('🗑️ Atividade removida');
+}
+
+function renderActivities() {
+  const list = document.getElementById('activityList');
+  const none = document.getElementById('noActivities');
+  list.innerHTML = '';
+
+  if (activities.length === 0) {
+    none.style.display = 'block';
+    return;
+  }
+  none.style.display = 'none';
+
+  activities.forEach(act => {
+    const dayData = SCHEDULE[parseInt(act.day)];
+    const periodData = dayData.periods[parseInt(act.period)];
+    const row = document.createElement('div');
+    row.className = 'activity-row';
+    row.innerHTML = `
+      <div class="act-dot"></div>
+      <div class="act-info">
+        <div class="act-title">${act.title}</div>
+        <div class="act-meta">${dayData.dayName} • ${periodData.time} ${periodData.subject}${act.date ? ' • Entrega: ' + new Date(act.date + 'T00:00:00').toLocaleDateString('pt-BR') : ''}</div>
+        ${act.desc ? `<div style="font-size:12px;color:#555;margin-top:4px">${act.desc}</div>` : ''}
+      </div>
+      <button class="delete-btn" onclick="deleteActivity(${act.id})" title="Remover">🗑️</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+// ========================
+// PDFs
+// ========================
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').style.background = 'white';
+  const files = [...e.dataTransfer.files].filter(f => f.type === 'application/pdf');
+  if (files.length) processPdfFiles(files);
+}
+
+function handlePdfUpload(e) {
+  const files = [...e.target.files];
+  if (files.length) processPdfFiles(files);
+  e.target.value = '';
+}
+
+function processPdfFiles(files) {
+  pendingPdfFiles = files;
+  // fill subject select
+  const sel = document.getElementById('pdfSubjectSel');
+  sel.innerHTML = ALL_SUBJECTS.map(s => `<option value="${s}">${s}</option>`).join('');
+  openModal('pdfSubjectModal');
+}
+
+function confirmPdfSubject() {
+  const subject = document.getElementById('pdfSubjectSel').value;
+  pendingPdfFiles.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      pdfs.push({ id: Date.now() + Math.random(), name: file.name, subject, data: e.target.result });
+      saveData();
+      renderPdfs();
+      renderSubjectTabs();
+    };
+    reader.readAsDataURL(file);
+  });
+  closeModal('pdfSubjectModal');
+  toast('📄 PDF(s) adicionado(s)!');
+}
+
+function filterPdfs(subject, el) {
+  currentPdfFilter = subject;
+  document.querySelectorAll('.subject-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderPdfs();
+}
+
+function renderSubjectTabs() {
+  const used = [...new Set(pdfs.map(p => p.subject))];
+  const tabs = document.getElementById('subjectTabs');
+  tabs.innerHTML = `<div class="subject-tab ${currentPdfFilter === 'all' ? 'active' : ''}" onclick="filterPdfs('all',this)">Todos</div>`;
+  used.forEach(s => {
+    const t = document.createElement('div');
+    t.className = 'subject-tab' + (currentPdfFilter === s ? ' active' : '');
+    t.textContent = s;
+    t.onclick = () => filterPdfs(s, t);
+    tabs.appendChild(t);
+  });
+}
+
+function renderPdfs() {
+  const grid = document.getElementById('pdfGrid');
+  const empty = document.getElementById('pdfEmpty');
+  const filtered = currentPdfFilter === 'all' ? pdfs : pdfs.filter(p => p.subject === currentPdfFilter);
+
+  grid.innerHTML = '';
+
+  if (filtered.length === 0) {
+    empty.style.display = 'block';
+    grid.appendChild(empty);
+    return;
+  }
+  empty.style.display = 'none';
+
+  filtered.forEach(pdf => {
+    const card = document.createElement('div');
+    card.className = 'pdf-card';
+    card.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div class="pdf-icon">📄</div>
+        <div style="flex:1;min-width:0">
+          <div class="pdf-name">${pdf.name.replace(/\.pdf$/i,'')}</div>
+          <div class="pdf-subject-tag" style="margin-top:8px">${pdf.subject}</div>
+        </div>
+        ${isLoggedIn ? `<button onclick="deletePdf(${pdf.id},event)" style="background:none;border:none;cursor:pointer;font-size:16px;color:#999;flex-shrink:0" title="Remover">✕</button>` : ''}
+      </div>
+    `;
+    if (pdf.data) card.onclick = () => window.open(pdf.data, '_blank');
+    else card.style.opacity = '0.7';
+    grid.appendChild(card);
+  });
+}
+
+function deletePdf(id, e) {
+  e.stopPropagation();
+  pdfs = pdfs.filter(p => p.id !== id);
+  saveData();
+  renderPdfs();
+  renderSubjectTabs();
+  toast('🗑️ PDF removido');
+}
+
+// ========================
+// INIT
+// ========================
+
+renderCalendar();
+renderPdfs();
+renderSubjectTabs();
+
+// Hide upload area until admin logs in
+document.getElementById('uploadAreaWrapper').style.display = 'none';
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
