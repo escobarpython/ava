@@ -173,9 +173,10 @@
     background: white;
     border: var(--border);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: var(--shadow);
     transition: transform 0.15s;
+    position: relative;
   }
 
   .day-col:hover {
@@ -250,6 +251,47 @@
     border-color: var(--accent2);
     background: #f9ffe2;
     cursor: pointer;
+  }
+
+  .day-col.saturday {
+    background: #fff4cc;
+  }
+
+  .day-col.saturday .day-periods {
+    position: relative;
+    min-height: 360px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fff6d9 0%, #ffeeb8 100%);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+
+  .saturday-pattern {
+    position: absolute;
+    inset: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+    opacity: 0.35;
+    transform: rotate(-6deg);
+    z-index: 0;
+  }
+
+  .saturday-pattern .line {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 18px;
+    color: #8f5b00;
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
+  .day-col.saturday .period-item {
+    position: relative;
+    z-index: 1;
+    margin-top: 8px;
+    background: rgba(255,255,255,0.92);
   }
 
   /* Subject colors */
@@ -645,7 +687,7 @@
   /* ACTIVITY POPOVER */
   .act-popover {
     position: absolute;
-    z-index: 50;
+    z-index: 9999;
     background: var(--black);
     color: var(--off-white);
     border-radius: 8px;
@@ -1125,6 +1167,7 @@ function goToday() { weekOffset = 0; renderCalendar(); }
 
 function closeAllPopovers() {
   document.querySelectorAll('.act-popover').forEach(p => p.remove());
+  document.querySelectorAll('.period-item').forEach(i => i.style.zIndex = '');
 }
 
 document.addEventListener('click', () => closeAllPopovers());
@@ -1152,6 +1195,7 @@ function renderCalendar() {
 
     const col = document.createElement('div');
     col.className = 'day-col' + (isToday ? ' today' : '');
+    if (idx === 5) col.classList.add('saturday');
 
     const header = document.createElement('div');
     header.className = 'day-header';
@@ -1160,6 +1204,18 @@ function renderCalendar() {
 
     const periods = document.createElement('div');
     periods.className = 'day-periods';
+
+    if (idx === 5) {
+      const pattern = document.createElement('div');
+      pattern.className = 'saturday-pattern';
+      for (let i = 0; i < 11; i++) {
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.textContent = 'PIC  PIC  PIC  PIC  PIC  PIC  PIC  PIC';
+        pattern.appendChild(line);
+      }
+      periods.appendChild(pattern);
+    }
 
     if (dayData.periods.length === 0) {
       const noClass = document.createElement('div');
@@ -1174,17 +1230,21 @@ function renderCalendar() {
       item.className = 'period-item ' + subClass;
       const materials = SUBJECT_MATERIALS[period.subject] || [];
       const pendingThemes = themes.filter(t => !t.done && t.subject === period.subject && dayDate >= today);
-      const hasNotes = materials.length > 0 || pendingThemes.length > 0;
+      const hasAction = pendingThemes.length > 0;
+      const hasNotes = materials.length > 0 || hasAction;
 
       if (hasNotes) {
-        item.classList.add('has-note');
-        const dot = document.createElement('div');
-        dot.className = 'activity-dot';
-        dot.style.background = 'var(--accent2)';
-        item.appendChild(dot);
+        if (hasAction) {
+          item.classList.add('has-note');
+          const dot = document.createElement('div');
+          dot.className = 'activity-dot';
+          dot.style.background = 'var(--accent2)';
+          item.appendChild(dot);
+        }
         item.addEventListener('click', (e) => {
           e.stopPropagation();
           closeAllPopovers();
+          item.style.zIndex = '10000';
           const pop = document.createElement('div');
           pop.className = 'act-popover';
 
@@ -1546,3 +1606,6 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 </script>
 </body>
 </html>
+
+
+// STERRADEV PROPERTY - POWERED BY STR ------> LEARN MORE @ STERRA FUN / STERRA RECORDS, STERRADEV, STERRAFC, STERRACRFT, STERRADC
