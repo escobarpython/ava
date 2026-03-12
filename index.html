@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>escobaraava 211</title>
+<title>escobarava 211</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --off-white: #F4F4F0;
-    --cream: #EBEBЕ6;
+    --cream: #EBEBE6;
     --black: #111111;
     --dark: #222222;
     --accent: #FF5C35;
@@ -165,7 +165,7 @@
 
   .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     gap: 12px;
   }
 
@@ -246,6 +246,12 @@
     right: 8px;
   }
 
+  .period-item.has-note {
+    border-color: var(--accent2);
+    background: #f9ffe2;
+    cursor: pointer;
+  }
+
   /* Subject colors */
   .s-fisica    { background: #E8F4FF; }
   .s-quimica   { background: #FFF0E8; }
@@ -263,6 +269,7 @@
   .s-filo      { background: #F0F0FF; }
   .s-pv        { background: #FFF5E8; }
   .s-er        { background: #F0FFF0; }
+  .s-pic       { background: #E8F0FF; }
 
   /* PDF SECTION */
   .pdf-section {
@@ -690,13 +697,78 @@
     font-family: 'Space Mono', monospace;
   }
 
+  .act-popover .pop-list {
+    margin-top: 8px;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .act-popover .pop-list strong {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    opacity: 0.9;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .act-popover .pop-theme {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 6px;
+  }
+
+  .act-popover .pop-theme button {
+    border: 1px solid rgba(255,255,255,0.45);
+    background: transparent;
+    color: var(--off-white);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
   .period-item { position: relative; }
 
   /* Responsive */
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
+    .calendar-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  @media (max-width: 820px) {
     .calendar-grid { grid-template-columns: repeat(2, 1fr); }
     header { padding: 12px 16px; }
-    .logo { font-size: 22px; }
+    .logo { font-size: 20px; }
+    .week-nav { flex-wrap: wrap; }
+  }
+
+  @media (max-width: 520px) {
+    main { padding: 20px 14px; }
+    .calendar-grid { grid-template-columns: 1fr; }
+    header {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-nav {
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .main-tabs {
+      width: 100%;
+    }
+    .main-tab {
+      flex: 1;
+      padding: 10px 8px;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
   }
 
   /* Doodle decorations */
@@ -719,36 +791,29 @@
 
 <!-- HEADER -->
 <header>
-  <div class="logo">escobaraava <span>211</span></div>
+  <div class="logo">escobarava <span>211</span></div>
   <div class="header-nav">
     <button class="nav-btn" onclick="showTab('calendar')">📅 Calendário</button>
-    <button class="nav-btn" onclick="showTab('pdfs')">📄 PDFs</button>
-    <button class="nav-btn dashboard-btn" onclick="openLogin()">⚙️ Dashboard</button>
+    <button class="nav-btn" onclick="showComingSoon()">📄 PDFs (EM BREVE)</button>
+    <button class="nav-btn dashboard-btn" onclick="showComingSoon()">⚙️ Atividades (EM BREVE)</button>
   </div>
 </header>
 
 <!-- MAIN -->
 <main>
 
-  <!-- DASHBOARD PANEL (hidden by default) -->
   <div class="dashboard-panel" id="dashboardPanel">
-    <div class="dash-header">
-      <div class="section-title" style="margin:0">⚙️ Dashboard</div>
-      <button class="btn btn-primary" onclick="openAddActivity()">+ Adicionar Atividade</button>
-    </div>
-    <div class="activity-list" id="activityList">
-      <!-- activities render here -->
-    </div>
-    <div id="noActivities" style="text-align:center;padding:30px;color:#888;font-family:'Architects Daughter',cursive;font-size:16px;">
-      Nenhuma atividade adicionada ainda!
+    <div class="section-title" style="margin:0">⚙️ Atividades</div>
+    <div style="margin-top:16px;background:var(--cream);border:var(--border);border-radius:10px;padding:18px 16px;font-family:'Space Mono',monospace;font-weight:700;font-size:13px;">
+      EM BREVE
     </div>
   </div>
 
   <!-- TABS -->
   <div class="main-tabs">
     <button class="main-tab active" id="tab-calendar" onclick="showTab('calendar')">📅 Calendário</button>
-    <button class="main-tab" id="tab-pdfs" onclick="showTab('pdfs')">📄 PDFs das Aulas</button>
-    <button class="main-tab" id="tab-upcoming" onclick="showTab('upcoming')">🔔 Próximas Atividades</button>
+    <button class="main-tab" id="tab-pdfs" onclick="showComingSoon()">📄 PDFs (EM BREVE)</button>
+    <button class="main-tab" id="tab-upcoming" onclick="showComingSoon()">🔔 Atividades (EM BREVE)</button>
   </div>
 
   <!-- CALENDAR TAB -->
@@ -769,35 +834,16 @@
   <!-- PDF TAB -->
   <div class="tab-content" id="content-pdfs">
     <div class="pdf-section">
-      <div class="subject-tabs" id="subjectTabs">
-        <div class="subject-tab active" onclick="filterPdfs('all', this)">Todos</div>
-      </div>
-
-      <div id="uploadAreaWrapper">
-        <div class="upload-area" onclick="document.getElementById('pdfInput').click()" id="uploadArea"
-             ondragover="event.preventDefault();this.style.background='var(--cream)'"
-             ondragleave="this.style.background='white'"
-             ondrop="handleDrop(event)">
-          <div class="upload-icon">📎</div>
-          <p>Clique ou arraste PDFs aqui</p>
-          <small>Adicione materiais de aula em PDF</small>
-        </div>
-        <br>
-      </div>
-
-      <input type="file" id="pdfInput" accept=".pdf" multiple style="display:none" onchange="handlePdfUpload(event)">
-
-      <div class="pdf-grid" id="pdfGrid">
-        <div class="pdf-empty" id="pdfEmpty">📚 Nenhum PDF adicionado ainda.</div>
+      <div class="pdf-empty" style="display:block">
+        PDFs: EM BREVE
       </div>
     </div>
   </div>
 
   <!-- UPCOMING ACTIVITIES TAB -->
   <div class="tab-content" id="content-upcoming">
-    <div id="upcomingList" style="display:flex;flex-direction:column;gap:10px;"></div>
-    <div id="upcomingEmpty" style="text-align:center;padding:60px;color:#888;font-family:'Space Mono',monospace;font-size:14px;border:1.5px dashed #ccc;border-radius:8px;display:none">
-      // nenhuma atividade encontrada
+    <div id="upcomingEmpty" style="text-align:center;padding:60px;color:#666;font-family:'Space Mono',monospace;font-size:14px;border:1.5px dashed #bbb;border-radius:8px;display:block;background:#fff">
+      ATIVIDADES: EM BREVE
     </div>
   </div>
 
@@ -842,6 +888,8 @@
           <option value="2">Quarta-feira</option>
           <option value="3">Quinta-feira</option>
           <option value="4">Sexta-feira</option>
+          <option value="5">Sábado</option>
+          <option value="6">Domingo</option>
         </select>
       </div>
       <div class="form-group">
@@ -891,49 +939,53 @@
 
 const SCHEDULE = [
   { day: 0, dayName: 'Segunda-feira', short: 'SEG', periods: [
-    { time: '07:30', subject: 'Física' },
-    { time: '08:18', subject: 'Física' },
-    { time: '09:26', subject: 'Geografia' },
-    { time: '10:14', subject: 'Geografia' },
-    { time: '11:14', subject: 'Matemática' },
-    { time: '13:30', subject: 'Biologia' },
-    { time: '14:18', subject: 'Produção Textual' },
-    { time: '15:26', subject: 'Língua Inglesa' },
-    { time: '16:14', subject: 'Química' },
-    { time: '17:14', subject: 'Ensino Religioso' },
+    { time: '07:30', subject: 'Geografia' },
+    { time: '08:18', subject: 'Biologia' },
+    { time: '09:26', subject: 'Biologia' },
+    { time: '10:14', subject: 'Física' },
+    { time: '11:14', subject: 'Física' },
+    { time: '13:30', subject: 'Matemática' },
+    { time: '14:18', subject: 'Matemática' },
+    { time: '15:26', subject: 'Ensino Religioso' },
+    { time: '16:14', subject: 'Língua Inglesa' },
+    { time: '17:14', subject: 'Química' },
   ]},
   { day: 1, dayName: 'Terça-feira', short: 'TER', periods: [
-    { time: '07:30', subject: 'Química' },
-    { time: '08:18', subject: 'Química' },
-    { time: '09:26', subject: 'História' },
-    { time: '10:14', subject: 'Literatura' },
-    { time: '11:14', subject: 'Projeto de Vida' },
-    { time: '12:02', subject: 'Língua Portuguesa' },
+    { time: '07:30', subject: 'Projeto de Vida' },
+    { time: '08:18', subject: 'Produção Textual' },
+    { time: '09:26', subject: 'Química' },
+    { time: '10:14', subject: 'Química' },
+    { time: '11:14', subject: 'Língua Portuguesa' },
+    { time: '12:02', subject: 'Física' },
   ]},
   { day: 2, dayName: 'Quarta-feira', short: 'QUA', periods: [
-    { time: '07:30', subject: 'Física' },
-    { time: '08:18', subject: 'História' },
-    { time: '09:26', subject: 'Língua Inglesa' },
-    { time: '10:14', subject: 'Biologia' },
-    { time: '11:14', subject: 'Educação Física' },
-    { time: '12:02', subject: 'Matemática' },
-  ]},
-  { day: 3, dayName: 'Quinta-feira', short: 'QUI', periods: [
-    { time: '07:30', subject: 'Matemática' },
-    { time: '08:18', subject: 'Artes' },
-    { time: '09:26', subject: 'Filosofia' },
-    { time: '10:14', subject: 'Produção Textual' },
-    { time: '11:14', subject: 'Geografia' },
-    { time: '12:02', subject: 'Educação Física' },
-  ]},
-  { day: 4, dayName: 'Sexta-feira', short: 'SEX', periods: [
     { time: '07:30', subject: 'Língua Portuguesa' },
     { time: '08:18', subject: 'Língua Portuguesa' },
-    { time: '09:26', subject: 'Biologia' },
-    { time: '10:14', subject: 'Sociologia' },
-    { time: '11:14', subject: 'Matemática' },
-    { time: '12:02', subject: 'História' },
+    { time: '09:26', subject: 'História' },
+    { time: '10:14', subject: 'Educação Física' },
+    { time: '11:14', subject: 'Biologia' },
+    { time: '12:02', subject: 'Geografia' },
   ]},
+  { day: 3, dayName: 'Quinta-feira', short: 'QUI', periods: [
+    { time: '07:30', subject: 'Produção Textual' },
+    { time: '08:18', subject: 'História' },
+    { time: '09:26', subject: 'Matemática' },
+    { time: '10:14', subject: 'Geografia' },
+    { time: '11:14', subject: 'Artes' },
+    { time: '12:02', subject: 'Filosofia' },
+  ]},
+  { day: 4, dayName: 'Sexta-feira', short: 'SEX', periods: [
+    { time: '07:30', subject: 'História' },
+    { time: '08:18', subject: 'Educação Física' },
+    { time: '09:26', subject: 'Língua Portuguesa' },
+    { time: '10:14', subject: 'Matemática' },
+    { time: '11:14', subject: 'Sociologia' },
+    { time: '12:02', subject: 'Língua Inglesa' },
+  ]},
+  { day: 5, dayName: 'Sábado', short: 'SÁB', periods: [
+    { time: '07:30', subject: 'LETIVO - PIC (trazer notebooks)' },
+  ]},
+  { day: 6, dayName: 'Domingo', short: 'DOM', periods: []},
 ];
 
 const ALL_SUBJECTS = [...new Set(SCHEDULE.flatMap(d => d.periods.map(p => p.subject)))].sort();
@@ -955,38 +1007,51 @@ const SUBJECT_CLASS = {
   'Filosofia': 's-filo',
   'Projeto de Vida': 's-pv',
   'Ensino Religioso': 's-er',
+  'LETIVO - PIC (trazer notebooks)': 's-pic',
 };
 
-let activities = JSON.parse(localStorage.getItem('escobAvaActivities') || 'null');
-let pdfs = JSON.parse(localStorage.getItem('escobAvaPdfs') || 'null');
+const SUBJECT_MATERIALS = {
+  'Geografia': ['Módulo 13', 'Módulo 14'],
+  'Filosofia': ['Módulo 13'],
+  'Biologia': ['Módulo 13'],
+  'Matemática': ['Módulo 13', 'Módulo 14'],
+  'Química': ['Módulo 13'],
+  'Língua Portuguesa': ['Módulo 13', 'Caderno+'],
+  'Sociologia': ['Módulo 13'],
+};
+
+const THEME_KEY = 'escobaravaThemes';
+const DEFAULT_THEMES = [
+  {
+    id: 'tema-mat-14-15-20-24-25-27-30',
+    subject: 'Matemática',
+    title: 'Tema',
+    details: 'Páginas 14, 15, 20, 24, 25, 27 e 30',
+    done: false,
+  },
+];
+
+const ACTIVITY_KEY = 'escobaravaActivities';
+const PDF_KEY = 'escobaravaPdfs';
+const LEGACY_ACTIVITY_KEY = 'escobAvaActivities';
+const LEGACY_PDF_KEY = 'escobAvaPdfs';
+
+let activities = JSON.parse(localStorage.getItem(ACTIVITY_KEY) || localStorage.getItem(LEGACY_ACTIVITY_KEY) || 'null');
+let pdfs = JSON.parse(localStorage.getItem(PDF_KEY) || localStorage.getItem(LEGACY_PDF_KEY) || 'null');
+let themes = JSON.parse(localStorage.getItem(THEME_KEY) || 'null');
 
 // Seed lorem ipsum data if first load
-if (!activities) {
-  const today = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  const dateStr = (offset) => {
-    const d = new Date(today);
-    d.setDate(d.getDate() + offset);
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  };
-  activities = [
-    { id: 1, title: 'Trabalho de Física — Lorem Ipsum', day: '0', period: '0', desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', date: dateStr(3) },
-    { id: 2, title: 'Prova de Matemática — Dolor Sit', day: '2', period: '5', desc: 'Ut enim ad minim veniam, quis nostrud exercitation.', date: dateStr(5) },
-    { id: 3, title: 'Redação — Adipiscing Elit', day: '1', period: '3', desc: 'Duis aute irure dolor in reprehenderit in voluptate.', date: dateStr(7) },
-    { id: 4, title: 'Seminário de Biologia — Consectetur', day: '4', period: '2', desc: 'Excepteur sint occaecat cupidatat non proident.', date: dateStr(10) },
-    { id: 5, title: 'Projeto de Química — Nostrud', day: '3', period: '0', desc: 'Sunt in culpa qui officia deserunt mollit anim id est laborum.', date: dateStr(14) },
-  ];
-  localStorage.setItem('escobAvaActivities', JSON.stringify(activities));
-}
+activities = [];
+localStorage.setItem(ACTIVITY_KEY, JSON.stringify(activities));
 
-if (!pdfs) {
-  pdfs = [
-    { id: 101, name: 'Lorem Ipsum — Introdução à Física.pdf', subject: 'Física', data: null },
-    { id: 102, name: 'Dolor Sit — Funções Matemáticas.pdf', subject: 'Matemática', data: null },
-    { id: 103, name: 'Adipiscing — Tabela Periódica.pdf', subject: 'Química', data: null },
-  ];
-  localStorage.setItem('escobAvaPdfs', JSON.stringify(pdfs));
+if (!Array.isArray(pdfs)) pdfs = [];
+pdfs = pdfs.filter(p => !/^(Lorem Ipsum|Dolor Sit|Adipiscing)/i.test(p.name || ''));
+localStorage.setItem(PDF_KEY, JSON.stringify(pdfs));
+
+if (!Array.isArray(themes)) {
+  themes = DEFAULT_THEMES;
 }
+localStorage.setItem(THEME_KEY, JSON.stringify(themes));
 let isLoggedIn = false;
 let weekOffset = 0;
 let pendingPdfFiles = [];
@@ -997,8 +1062,9 @@ let currentPdfFilter = 'all';
 // ========================
 
 function saveData() {
-  localStorage.setItem('escobAvaActivities', JSON.stringify(activities));
-  localStorage.setItem('escobAvaPdfs', JSON.stringify(pdfs));
+  localStorage.setItem(ACTIVITY_KEY, JSON.stringify(activities));
+  localStorage.setItem(PDF_KEY, JSON.stringify(pdfs));
+  localStorage.setItem(THEME_KEY, JSON.stringify(themes));
 }
 
 function toast(msg, duration = 2500) {
@@ -1027,16 +1093,27 @@ function formatDate(d) {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 }
 
+function toYmd(d) {
+  const date = new Date(d);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 // ========================
 // TABS
 // ========================
 
 function showTab(name) {
+  if (name !== 'calendar') {
+    showComingSoon();
+    return;
+  }
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.main-tab').forEach(el => el.classList.remove('active'));
   document.getElementById('content-' + name).classList.add('active');
   document.getElementById('tab-' + name).classList.add('active');
-  if (name === 'upcoming') renderUpcoming();
 }
 
 // ========================
@@ -1054,14 +1131,15 @@ document.addEventListener('click', () => closeAllPopovers());
 
 function renderCalendar() {
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const monday = getMonday(today);
   monday.setDate(monday.getDate() + weekOffset * 7);
 
-  const endFri = new Date(monday);
-  endFri.setDate(endFri.getDate() + 4);
+  const endSun = new Date(monday);
+  endSun.setDate(endSun.getDate() + 6);
 
   document.getElementById('weekLabel').textContent =
-    formatDate(monday) + ' – ' + formatDate(endFri);
+    formatDate(monday) + ' – ' + formatDate(endSun);
 
   const grid = document.getElementById('calendarGrid');
   grid.innerHTML = '';
@@ -1069,7 +1147,8 @@ function renderCalendar() {
   SCHEDULE.forEach((dayData, idx) => {
     const dayDate = new Date(monday);
     dayDate.setDate(dayDate.getDate() + idx);
-    const isToday = weekOffset === 0 && today.getDay() === idx + 1;
+    const todayIdxFromMonday = (today.getDay() + 6) % 7;
+    const isToday = weekOffset === 0 && todayIdxFromMonday === idx;
 
     const col = document.createElement('div');
     col.className = 'day-col' + (isToday ? ' today' : '');
@@ -1082,35 +1161,68 @@ function renderCalendar() {
     const periods = document.createElement('div');
     periods.className = 'day-periods';
 
+    if (dayData.periods.length === 0) {
+      const noClass = document.createElement('div');
+      noClass.style.cssText = 'padding:10px;border:1.5px dashed #ccc;border-radius:8px;font-family:DM Mono,monospace;font-size:11px;color:#777;text-align:center;';
+      noClass.textContent = 'Sem aulas';
+      periods.appendChild(noClass);
+    }
+
     dayData.periods.forEach((period, pidx) => {
       const item = document.createElement('div');
       const subClass = SUBJECT_CLASS[period.subject] || '';
       item.className = 'period-item ' + subClass;
+      const materials = SUBJECT_MATERIALS[period.subject] || [];
+      const pendingThemes = themes.filter(t => !t.done && t.subject === period.subject && dayDate >= today);
+      const hasNotes = materials.length > 0 || pendingThemes.length > 0;
 
-      // check activities
-      const acts = activities.filter(a => parseInt(a.day) === idx && parseInt(a.period) === pidx);
-      if (acts.length > 0) {
-        item.classList.add('has-activity');
+      if (hasNotes) {
+        item.classList.add('has-note');
         const dot = document.createElement('div');
         dot.className = 'activity-dot';
+        dot.style.background = 'var(--accent2)';
         item.appendChild(dot);
-        item.style.cursor = 'pointer';
         item.addEventListener('click', (e) => {
           e.stopPropagation();
           closeAllPopovers();
           const pop = document.createElement('div');
           pop.className = 'act-popover';
-          pop.innerHTML = acts.map(act => {
-            const dueDate = act.date ? new Date(act.date + 'T00:00:00') : null;
-            return `
-              <div class="pop-title">${act.title}</div>
-              <div class="pop-meta">${SCHEDULE[idx].dayName} • ${period.time} — ${period.subject}</div>
-              ${act.desc ? `<div class="pop-desc">${act.desc}</div>` : ''}
-              ${dueDate ? `<div class="pop-due">📅 entrega: ${dueDate.toLocaleDateString('pt-BR')}</div>` : ''}
-            `;
-          }).join('<hr style="border:none;border-top:1px solid rgba(255,255,255,0.15);margin:10px 0">');
+
+          const materialHtml = materials.length
+            ? `<div class="pop-list"><strong>Livros / Módulos</strong>${materials.join(' • ')}</div>`
+            : '';
+
+          const themesHtml = pendingThemes.length
+            ? pendingThemes.map(t => `
+                <div class="pop-theme">
+                  <div>
+                    <strong style="margin:0;display:block">Tema</strong>
+                    <div style="font-size:10px;opacity:0.9">${t.details}</div>
+                  </div>
+                  <button data-theme-id="${t.id}" type="button">Concluir</button>
+                </div>
+              `).join('')
+            : '';
+
+          pop.innerHTML = `
+            <div class="pop-title">${period.subject}</div>
+            <div class="pop-meta">${SCHEDULE[idx].dayName} • ${period.time}</div>
+            ${materialHtml}
+            ${themesHtml}
+          `;
           pop.id = 'popover-active';
           item.appendChild(pop);
+
+          pop.querySelectorAll('[data-theme-id]').forEach(btn => {
+            btn.addEventListener('click', (evt) => {
+              evt.stopPropagation();
+              const themeId = btn.getAttribute('data-theme-id');
+              themes = themes.map(t => t.id === themeId ? { ...t, done: true } : t);
+              saveData();
+              renderCalendar();
+              toast('Tema marcado como concluído');
+            });
+          });
         });
       }
 
@@ -1128,15 +1240,11 @@ function renderCalendar() {
 // ========================
 
 function openLogin() {
-  if (isLoggedIn) {
-    toggleDashboard();
-    return;
-  }
-  document.getElementById('loginUser').value = '';
-  document.getElementById('loginPass').value = '';
-  document.getElementById('loginError').style.display = 'none';
-  openModal('loginModal');
-  setTimeout(() => document.getElementById('loginUser').focus(), 100);
+  showComingSoon();
+}
+
+function showComingSoon() {
+  toast('EM BREVE');
 }
 
 function doLogin() {
@@ -1160,7 +1268,8 @@ function toggleDashboard(forceOpen) {
     panel.classList.add('open');
     renderActivities();
     // show upload area for admin
-    document.getElementById('uploadAreaWrapper').style.display = 'block';
+    const uploadArea = document.getElementById('uploadAreaWrapper');
+    if (uploadArea) uploadArea.style.display = 'block';
   } else {
     panel.classList.remove('open');
   }
@@ -1173,6 +1282,8 @@ function toggleDashboard(forceOpen) {
 function renderUpcoming() {
   const list = document.getElementById('upcomingList');
   const empty = document.getElementById('upcomingEmpty');
+  if (!list || !empty) return;
+
   list.innerHTML = '';
 
   const sorted = [...activities].sort((a, b) => {
@@ -1228,6 +1339,9 @@ function renderUpcoming() {
 // ========================
 
 function openAddActivity() {
+  showComingSoon();
+  return;
+
   // populate period select based on first day
   populatePeriodSelect(0);
   document.getElementById('actTitle').value = '';
@@ -1250,6 +1364,9 @@ function populatePeriodSelect(dayIdx) {
 }
 
 function saveActivity() {
+  showComingSoon();
+  return;
+
   const title = document.getElementById('actTitle').value.trim();
   if (!title) { alert('Insira um título!'); return; }
   const day = document.getElementById('actDay').value;
@@ -1267,6 +1384,9 @@ function saveActivity() {
 }
 
 function deleteActivity(id) {
+  showComingSoon();
+  return;
+
   activities = activities.filter(a => a.id !== id);
   saveData();
   renderActivities();
@@ -1278,6 +1398,7 @@ function deleteActivity(id) {
 function renderActivities() {
   const list = document.getElementById('activityList');
   const none = document.getElementById('noActivities');
+  if (!list || !none) return;
   list.innerHTML = '';
 
   if (activities.length === 0) {
@@ -1353,8 +1474,10 @@ function filterPdfs(subject, el) {
 }
 
 function renderSubjectTabs() {
-  const used = [...new Set(pdfs.map(p => p.subject))];
   const tabs = document.getElementById('subjectTabs');
+  if (!tabs) return;
+
+  const used = [...new Set(pdfs.map(p => p.subject))];
   tabs.innerHTML = `<div class="subject-tab ${currentPdfFilter === 'all' ? 'active' : ''}" onclick="filterPdfs('all',this)">Todos</div>`;
   used.forEach(s => {
     const t = document.createElement('div');
@@ -1368,6 +1491,7 @@ function renderSubjectTabs() {
 function renderPdfs() {
   const grid = document.getElementById('pdfGrid');
   const empty = document.getElementById('pdfEmpty');
+  if (!grid || !empty) return;
   const filtered = currentPdfFilter === 'all' ? pdfs : pdfs.filter(p => p.subject === currentPdfFilter);
 
   grid.innerHTML = '';
@@ -1412,11 +1536,6 @@ function deletePdf(id, e) {
 // ========================
 
 renderCalendar();
-renderPdfs();
-renderSubjectTabs();
-
-// Hide upload area until admin logs in
-document.getElementById('uploadAreaWrapper').style.display = 'none';
 
 // Close modals on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
