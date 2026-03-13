@@ -172,7 +172,7 @@
   .day-col {
     background: white;
     border: var(--border);
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: visible;
     box-shadow: var(--shadow);
     transition: transform 0.15s;
@@ -188,6 +188,8 @@
     background: var(--black);
     color: var(--off-white);
     padding: 10px 8px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
     text-align: center;
     font-family: 'Space Mono', monospace;
     font-weight: 700;
@@ -205,16 +207,19 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
   }
 
   .period-item {
     padding: 7px 10px;
-    border-radius: 7px;
+    border-radius: 9px;
     font-size: 12px;
     font-weight: 700;
     border: 2px solid transparent;
     position: relative;
     cursor: default;
+    overflow: hidden;
   }
 
   .period-item .time {
@@ -254,16 +259,21 @@
   }
 
   .day-col.saturday {
-    background: #ffe4e4;
+    background: #ffd6d6;
   }
 
   .day-col.saturday .day-periods {
     position: relative;
     min-height: 360px;
     overflow: hidden;
-    background: #ffd6d6;
+    background: transparent;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
+  }
+
+  .day-col.saturday .day-header {
+    background: #ff9e9e;
+    color: #3a0000;
   }
 
   .day-col.saturday .period-item {
@@ -820,6 +830,82 @@
     .day-header { font-size: 11px; }
   }
 
+  /* IFA */
+  .s-ifa { background: #EDE9FE; border-left: 3px solid #7C3AED !important; }
+  .period-item.s-ifa .subject { color: #4C1D95; }
+  .period-item.s-ifa .time { color: #6D28D9; }
+
+  /* Tomorrow Panel */
+  .tomorrow-panel {
+    background: var(--black);
+    color: var(--off-white);
+    border: var(--border);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .tomorrow-panel .tmr-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  .tomorrow-panel .tmr-date {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.55;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .tomorrow-panel .tmr-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tomorrow-panel .tmr-item {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 8px;
+    padding: 10px 14px;
+    min-width: 130px;
+  }
+
+  .tomorrow-panel .tmr-item.tmr-ifa {
+    border-color: #A78BFA;
+    background: rgba(167,139,250,0.12);
+  }
+
+  .tomorrow-panel .tmr-subject {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .tomorrow-panel .tmr-mats {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    margin-top: 5px;
+    color: var(--accent2);
+    opacity: 0.85;
+  }
+
+  .tomorrow-panel .tmr-empty {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    opacity: 0.6;
+    text-align: center;
+    padding: 6px 0;
+  }
+
   /* Doodle decorations */
   .doodle {
     position: fixed;
@@ -868,6 +954,8 @@
   <!-- CALENDAR TAB -->
   <div class="tab-content active" id="content-calendar">
     <div class="calendar-section">
+      <div class="tomorrow-panel" id="tomorrowPanel"></div>
+
       <div class="week-nav">
         <button class="week-arrow" onclick="changeWeek(-1)">←</button>
         <div class="week-label" id="weekLabel">Semana atual</div>
@@ -1069,6 +1157,35 @@ const SUBJECT_MATERIALS = {
   'Sociologia': ['Módulo 13'],
 };
 
+// ========================
+// IFA
+// ========================
+
+// Semana de referência: 09/03/2026 = paridade 0
+// Terça: Psicologia (só paridade 0)
+// Quarta: RI (paridade 0) / Ed. Financeira (paridade 1)
+// Quinta: C. Forenses Turma B (paridade 0) / Turma A (paridade 1) — toda semana
+const IFA_REF_MONDAY = new Date(2026, 2, 9);
+
+function getIfaWeekParity(mondayDate) {
+  const diffMs = new Date(mondayDate).setHours(0,0,0,0) - IFA_REF_MONDAY.getTime();
+  const diffWeeks = Math.round(diffMs / (7 * 24 * 60 * 60 * 1000));
+  return ((diffWeeks % 2) + 2) % 2;
+}
+
+// Retorna { subject, time } ou null se não tiver IFA
+function getIfaForDay(dayIdx, mondayDate) {
+  const p = getIfaWeekParity(mondayDate);
+  if (dayIdx === 1) return p === 0 ? { subject: 'Psicologia', time: '14:00' } : null;
+  if (dayIdx === 2) return p === 0
+    ? { subject: 'Rel. Internacionais', time: '14:00' }
+    : { subject: 'Ed. Financeira', time: '14:00' };
+  if (dayIdx === 3) return p === 0
+    ? { subject: 'C. Forenses (Turma B)', time: '14:00' }
+    : { subject: 'C. Forenses (Turma A)', time: '14:00' };
+  return null;
+}
+
 const THEME_KEY = 'escobaravaThemes';
 const DEFAULT_THEMES = [
   {
@@ -1212,14 +1329,17 @@ function renderCalendar() {
     const periods = document.createElement('div');
     periods.className = 'day-periods';
 
-    if (dayData.periods.length === 0) {
+    // Sábado letivo é semana sim/não (paridade 0)
+    const effectivePeriods = (idx === 5 && getIfaWeekParity(monday) !== 0) ? [] : dayData.periods;
+
+    if (effectivePeriods.length === 0) {
       const noClass = document.createElement('div');
       noClass.style.cssText = 'padding:10px;border:1.5px dashed #ccc;border-radius:8px;font-family:DM Mono,monospace;font-size:11px;color:#777;text-align:center;';
       noClass.textContent = 'Sem aulas';
       periods.appendChild(noClass);
     }
 
-    dayData.periods.forEach((period, pidx) => {
+    effectivePeriods.forEach((period, pidx) => {
       const item = document.createElement('div');
       const subClass = SUBJECT_CLASS[period.subject] || '';
       item.className = 'period-item ' + subClass;
@@ -1285,9 +1405,86 @@ function renderCalendar() {
       periods.appendChild(item);
     });
 
+    // IFA
+    const ifa = getIfaForDay(idx, monday);
+    if (ifa) {
+      const ifaItem = document.createElement('div');
+      ifaItem.className = 'period-item s-ifa';
+      ifaItem.innerHTML = `<span class="time">${ifa.time} – 15:40</span><span class="subject">IFA — ${ifa.subject}</span>`;
+      periods.appendChild(ifaItem);
+    }
+
     col.appendChild(periods);
     grid.appendChild(col);
   });
+}
+
+// ========================
+// TOMORROW PANEL
+// ========================
+
+function renderTomorrow() {
+  const panel = document.getElementById('tomorrowPanel');
+  if (!panel) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Pula fins de semana: se hoje é sexta vai para segunda, sábado → segunda, domingo → segunda
+  let daysAhead = 1;
+  const todayJs = today.getDay(); // 0=Dom,6=Sáb,5=Sex
+  if (todayJs === 5) daysAhead = 3; // sexta → segunda
+  if (todayJs === 6) daysAhead = 2; // sábado → segunda
+  if (todayJs === 0) daysAhead = 1; // domingo → segunda
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + daysAhead);
+
+  const schedIdx = (tomorrow.getDay() + 6) % 7; // 0=Seg..6=Dom
+  const dayData = SCHEDULE[schedIdx];
+  const tomorrowMonday = getMonday(tomorrow);
+
+  const label = daysAhead === 1 ? 'amanhã' : 'na segunda';
+  const dateStr = `${dayData.dayName}, ${formatDate(tomorrow)}`;
+
+  const tomorrowSchedIdx = schedIdx;
+  const effectivePeriodsTmr = (tomorrowSchedIdx === 5 && getIfaWeekParity(tomorrowMonday) !== 0)
+    ? [] : dayData.periods;
+
+  if (!dayData || effectivePeriodsTmr.length === 0) {
+    panel.innerHTML = `
+      <div class="tmr-header">📚 O que levar ${label}? <span class="tmr-date">${dateStr}</span></div>
+      <div class="tmr-empty">Sem aulas ${label} 🎉</div>
+    `;
+    return;
+  }
+
+  const seenSubjects = new Set();
+  const items = [];
+
+  effectivePeriodsTmr.forEach(p => {
+    if (!seenSubjects.has(p.subject)) {
+      seenSubjects.add(p.subject);
+      items.push({ subject: p.subject, mats: SUBJECT_MATERIALS[p.subject] || [] });
+    }
+  });
+
+  const ifa = getIfaForDay(schedIdx, tomorrowMonday);
+  if (ifa) {
+    items.push({ subject: `IFA — ${ifa.subject}`, mats: [], ifa: true });
+  }
+
+  panel.innerHTML = `
+    <div class="tmr-header">📚 O que levar ${label}? <span class="tmr-date">${dateStr}</span></div>
+    <div class="tmr-items">
+      ${items.map(it => `
+        <div class="tmr-item${it.ifa ? ' tmr-ifa' : ''}">
+          <div class="tmr-subject">${it.subject}</div>
+          ${it.mats.length ? `<div class="tmr-mats">${it.mats.join(' · ')}</div>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 // ========================
@@ -1594,6 +1791,7 @@ function deletePdf(id, e) {
 // ========================
 
 renderCalendar();
+renderTomorrow();
 
 // Close modals on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
