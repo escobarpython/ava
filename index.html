@@ -689,6 +689,65 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
+  .themes-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .themes-col {
+    background: #fff;
+    border: var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .themes-col h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+  }
+
+  .theme-item {
+    border: 1.5px solid #222;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    background: #fafafa;
+  }
+
+  .theme-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .theme-item .theme-subject {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .theme-item .theme-details {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .theme-item .theme-btn {
+    border: var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    background: #111;
+    color: #fff;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
   /* ACTIVITY POPOVER */
   .act-popover {
     position: absolute;
@@ -859,6 +918,16 @@
     .period-item {
       padding: 8px 10px;
     }
+    .themes-board {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .themes-col {
+      padding: 12px;
+    }
+    .theme-item {
+      padding: 10px;
+    }
   }
 
   @media (max-width: 380px) {
@@ -986,7 +1055,7 @@
   <div class="main-tabs">
     <button class="main-tab active" id="tab-calendar" onclick="showTab('calendar')">📅 Calendário</button>
     <button class="main-tab" id="tab-pdfs" onclick="showComingSoon()">📄 PDFs (EM BREVE)</button>
-    <button class="main-tab" id="tab-upcoming" onclick="showComingSoon()">🔔 Atividades (EM BREVE)</button>
+    <button class="main-tab" id="tab-upcoming" onclick="showTab('upcoming')">✅ Temas / Atividades</button>
   </div>
 
   <!-- CALENDAR TAB -->
@@ -1017,8 +1086,9 @@
 
   <!-- UPCOMING ACTIVITIES TAB -->
   <div class="tab-content" id="content-upcoming">
-    <div id="upcomingEmpty" style="text-align:center;padding:60px;color:#666;font-family:'Space Mono',monospace;font-size:14px;border:1.5px dashed #bbb;border-radius:8px;display:block;background:#fff">
-      ATIVIDADES: EM BREVE
+    <div class="themes-board" id="themesBoard"></div>
+    <div id="upcomingEmpty" style="text-align:center;padding:30px;color:#666;font-family:'Space Mono',monospace;font-size:14px;border:1.5px dashed #bbb;border-radius:8px;display:none;background:#fff">
+      Nenhum tema cadastrado
     </div>
   </div>
 
@@ -1311,7 +1381,7 @@ function toYmd(d) {
 // ========================
 
 function showTab(name) {
-  if (name !== 'calendar') {
+  if (name === 'pdfs') {
     showComingSoon();
     return;
   }
@@ -1319,6 +1389,7 @@ function showTab(name) {
   document.querySelectorAll('.main-tab').forEach(el => el.classList.remove('active'));
   document.getElementById('content-' + name).classList.add('active');
   document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'upcoming') renderThemesBoard();
 }
 
 // ========================
@@ -1378,6 +1449,13 @@ function openFloatingPopover(anchorEl, html, onReady) {
   pop.classList.toggle('above', isAbove);
 
   if (onReady) onReady(pop);
+}
+
+function toggleThemeDone(themeId, done) {
+  themes = themes.map(t => t.id === themeId ? { ...t, done } : t);
+  saveData();
+  renderCalendar();
+  renderThemesBoard();
 }
 
 function renderCalendar() {
@@ -1472,9 +1550,7 @@ function renderCalendar() {
               btn.addEventListener('click', (evt) => {
                 evt.stopPropagation();
                 const themeId = btn.getAttribute('data-theme-id');
-                themes = themes.map(t => t.id === themeId ? { ...t, done: true } : t);
-                saveData();
-                renderCalendar();
+                toggleThemeDone(themeId, true);
                 toast('Tema marcado como concluído');
               });
             });
@@ -1503,6 +1579,46 @@ function renderCalendar() {
 // ========================
 // TOMORROW PANEL
 // ========================
+
+function renderThemesBoard() {
+  const board = document.getElementById('themesBoard');
+  const empty = document.getElementById('upcomingEmpty');
+  if (!board || !empty) return;
+
+  const pending = themes.filter(t => !t.done);
+  const done = themes.filter(t => t.done);
+
+  if (!themes.length) {
+    board.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const renderItems = (items, doneState) => {
+    if (!items.length) return '<div class="theme-item"><div class="theme-details">Nenhum item</div></div>';
+    return items.map(t => `
+      <div class="theme-item">
+        <div class="theme-subject">${t.subject}</div>
+        <div class="theme-details">${t.title}: ${t.details}</div>
+        <button class="theme-btn" onclick="toggleThemeDone('${t.id}', ${!doneState})">
+          ${doneState ? 'Desmarcar' : 'Marcar como concluído'}
+        </button>
+      </div>
+    `).join('');
+  };
+
+  board.innerHTML = `
+    <div class="themes-col">
+      <h3>Pendentes</h3>
+      ${renderItems(pending, false)}
+    </div>
+    <div class="themes-col">
+      <h3>Concluídos</h3>
+      ${renderItems(done, true)}
+    </div>
+  `;
+}
 
 function renderTomorrow() {
   const panel = document.getElementById('tomorrowPanel');
@@ -1535,7 +1651,7 @@ function renderTomorrow() {
 
   if (!dayData || effectivePeriodsTmr.length === 0) {
     panel.innerHTML = `
-      <div class="tmr-header">📚 O que levar ${label}? <span class="tmr-date">${dateStr}</span></div>
+      <div class="tmr-header">📚 o que levar ${label}? <span class="tmr-date">${dateStr}</span></div>
       <div class="tmr-empty">Sem aulas ${label} 🎉</div>
     `;
     return;
@@ -1557,7 +1673,7 @@ function renderTomorrow() {
   }
 
   panel.innerHTML = `
-    <div class="tmr-header">📚 O que levar ${label}? <span class="tmr-date">${dateStr}</span></div>
+    <div class="tmr-header">📚 o que levar ${label}? <span class="tmr-date">${dateStr}</span></div>
     <div class="tmr-items">
       ${items.map(it => `
         <div class="tmr-item${it.ifa ? ' tmr-ifa' : ''}">
@@ -1874,6 +1990,7 @@ function deletePdf(id, e) {
 
 renderCalendar();
 renderTomorrow();
+renderThemesBoard();
 
 // Close modals on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
