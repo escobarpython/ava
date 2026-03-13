@@ -688,6 +688,12 @@
     font-family: 'DM Mono', monospace;
   }
 
+  .act-popover.floating {
+    position: fixed;
+    z-index: 2147483647;
+    max-width: min(300px, calc(100vw - 16px));
+  }
+
   .act-popover::before {
     content: '';
     position: absolute;
@@ -696,6 +702,13 @@
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
     border-bottom: 7px solid var(--black);
+  }
+
+  .act-popover.above::before {
+    top: auto;
+    bottom: -7px;
+    border-bottom: none;
+    border-top: 7px solid var(--black);
   }
 
   .act-popover .pop-title {
@@ -1296,6 +1309,43 @@ function closeAllPopovers() {
 }
 
 document.addEventListener('click', () => closeAllPopovers());
+document.addEventListener('scroll', () => closeAllPopovers(), true);
+window.addEventListener('resize', () => closeAllPopovers());
+
+function openFloatingPopover(anchorEl, html, onReady) {
+  closeAllPopovers();
+  anchorEl.style.zIndex = '10000';
+
+  const pop = document.createElement('div');
+  pop.className = 'act-popover floating';
+  pop.innerHTML = html;
+  document.body.appendChild(pop);
+
+  const rect = anchorEl.getBoundingClientRect();
+  const margin = 8;
+  const gap = 8;
+
+  let left = rect.left;
+  const maxLeft = window.innerWidth - pop.offsetWidth - margin;
+  left = Math.max(margin, Math.min(left, maxLeft));
+
+  let top = rect.bottom + gap;
+  let isAbove = false;
+  if (top + pop.offsetHeight > window.innerHeight - margin) {
+    top = rect.top - pop.offsetHeight - gap;
+    isAbove = true;
+  }
+  if (top < margin) {
+    top = margin;
+    isAbove = false;
+  }
+
+  pop.style.left = `${left}px`;
+  pop.style.top = `${top}px`;
+  pop.classList.toggle('above', isAbove);
+
+  if (onReady) onReady(pop);
+}
 
 function renderCalendar() {
   const today = new Date();
@@ -1361,11 +1411,6 @@ function renderCalendar() {
         }
         item.addEventListener('click', (e) => {
           e.stopPropagation();
-          closeAllPopovers();
-          item.style.zIndex = '10000';
-          const pop = document.createElement('div');
-          pop.className = 'act-popover';
-
           const materialHtml = materials.length
             ? `<div class="pop-list"><strong>Livros / Módulos</strong>${materials.join(' • ')}</div>`
             : '';
@@ -1382,23 +1427,23 @@ function renderCalendar() {
               `).join('')
             : '';
 
-          pop.innerHTML = `
+          const popHtml = `
             <div class="pop-title">${period.subject}</div>
             <div class="pop-meta">${SCHEDULE[idx].dayName} • ${period.time}</div>
             ${materialHtml}
             ${themesHtml}
           `;
-          pop.id = 'popover-active';
-          item.appendChild(pop);
 
-          pop.querySelectorAll('[data-theme-id]').forEach(btn => {
-            btn.addEventListener('click', (evt) => {
-              evt.stopPropagation();
-              const themeId = btn.getAttribute('data-theme-id');
-              themes = themes.map(t => t.id === themeId ? { ...t, done: true } : t);
-              saveData();
-              renderCalendar();
-              toast('Tema marcado como concluído');
+          openFloatingPopover(item, popHtml, (pop) => {
+            pop.querySelectorAll('[data-theme-id]').forEach(btn => {
+              btn.addEventListener('click', (evt) => {
+                evt.stopPropagation();
+                const themeId = btn.getAttribute('data-theme-id');
+                themes = themes.map(t => t.id === themeId ? { ...t, done: true } : t);
+                saveData();
+                renderCalendar();
+                toast('Tema marcado como concluído');
+              });
             });
           });
         });
