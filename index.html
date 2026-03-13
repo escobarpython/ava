@@ -4,6 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>escobar ava 221</title>
+<meta name="description" content="Calendário escolar escobar ava 221 com horários, materiais e visão rápida do que levar.">
+
+<!-- Open Graph (preview em WhatsApp, Telegram, Discord etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="escobar ava 221">
+<meta property="og:description" content="Calendário escolar com horários da semana, materiais por matéria e painel do dia seguinte.">
+<meta property="og:url" content="https://escobarpython.github.io/ava/">
+<meta property="og:image" content="https://escobarpython.github.io/ava/preview.jpg">
+<meta property="og:image:alt" content="Prévia do calendário escobar ava 221">
+
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="escobar ava 221">
+<meta name="twitter:description" content="Calendário escolar com horários, materiais e visão rápida do dia seguinte.">
+<meta name="twitter:image" content="https://escobarpython.github.io/ava/preview.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -689,9 +705,18 @@
   }
 
   .act-popover.floating {
-    position: fixed;
-    z-index: 2147483647;
+    position: absolute;
+    z-index: 1;
     max-width: min(300px, calc(100vw - 16px));
+    pointer-events: auto;
+  }
+
+  .popover-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    pointer-events: none;
+    isolation: isolate;
   }
 
   .act-popover::before {
@@ -1316,10 +1341,18 @@ function openFloatingPopover(anchorEl, html, onReady) {
   closeAllPopovers();
   anchorEl.style.zIndex = '10000';
 
+  let layer = document.getElementById('popoverLayer');
+  if (!layer) {
+    layer = document.createElement('div');
+    layer.id = 'popoverLayer';
+    layer.className = 'popover-layer';
+    document.body.appendChild(layer);
+  }
+
   const pop = document.createElement('div');
   pop.className = 'act-popover floating';
   pop.innerHTML = html;
-  document.body.appendChild(pop);
+  layer.appendChild(pop);
 
   const rect = anchorEl.getBoundingClientRect();
   const margin = 8;
