@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>escobarava 211</title>
+<title>escobar ava 221</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -926,7 +926,7 @@
 
 <!-- HEADER -->
 <header>
-  <div class="logo">escobarava <span>211</span></div>
+  <div class="logo">escobar ava <span>221</span></div>
   <div class="header-nav">
     <button class="nav-btn" onclick="showTab('calendar')">📅 Calendário</button>
     <button class="nav-btn" onclick="showComingSoon()">📄 PDFs (EM BREVE)</button>
@@ -1222,6 +1222,7 @@ let isLoggedIn = false;
 let weekOffset = 0;
 let pendingPdfFiles = [];
 let currentPdfFilter = 'all';
+const CURRENT_WEEK_MONDAY_YMD = toYmd(getMonday(new Date()));
 
 // ========================
 // UTILS
@@ -1319,7 +1320,9 @@ function renderCalendar() {
 
     const col = document.createElement('div');
     col.className = 'day-col' + (isToday ? ' today' : '');
-    if (idx === 5) col.classList.add('saturday');
+    const isRenderedCurrentWeek = toYmd(monday) === CURRENT_WEEK_MONDAY_YMD;
+    const isLetivoSaturday = idx === 5 && isRenderedCurrentWeek;
+    if (isLetivoSaturday) col.classList.add('saturday');
 
     const header = document.createElement('div');
     header.className = 'day-header';
@@ -1329,10 +1332,10 @@ function renderCalendar() {
     const periods = document.createElement('div');
     periods.className = 'day-periods';
 
-    // Sábado letivo é semana sim/não (paridade 0)
-    const effectivePeriods = (idx === 5 && getIfaWeekParity(monday) !== 0) ? [] : dayData.periods;
+    // Sábado letivo só na semana atual
+    const effectivePeriods = (idx === 5 && !isLetivoSaturday) ? [] : dayData.periods;
 
-    if (effectivePeriods.length === 0) {
+    if (effectivePeriods.length === 0 && idx !== 5) {
       const noClass = document.createElement('div');
       noClass.style.cssText = 'padding:10px;border:1.5px dashed #ccc;border-radius:8px;font-family:DM Mono,monospace;font-size:11px;color:#777;text-align:center;';
       noClass.textContent = 'Sem aulas';
@@ -1448,7 +1451,8 @@ function renderTomorrow() {
   const dateStr = `${dayData.dayName}, ${formatDate(tomorrow)}`;
 
   const tomorrowSchedIdx = schedIdx;
-  const effectivePeriodsTmr = (tomorrowSchedIdx === 5 && getIfaWeekParity(tomorrowMonday) !== 0)
+  const tomorrowIsCurrentWeek = toYmd(tomorrowMonday) === CURRENT_WEEK_MONDAY_YMD;
+  const effectivePeriodsTmr = (tomorrowSchedIdx === 5 && !tomorrowIsCurrentWeek)
     ? [] : dayData.periods;
 
   if (!dayData || effectivePeriodsTmr.length === 0) {
